@@ -81,7 +81,7 @@ static struct lwm2m_engine_obj_inst *test_obj_create(uint16_t obj_inst_id)
 	return &test_inst;
 }
 
-static void test_obj_init(void)
+static void *test_obj_init(void)
 {
 	struct lwm2m_engine_obj_inst *obj_inst = NULL;
 
@@ -96,6 +96,7 @@ static void test_obj_init(void)
 
 	(void)lwm2m_register_obj(&test_obj);
 	(void)lwm2m_create_obj_inst(TEST_OBJ_ID, TEST_OBJ_INST_ID, &obj_inst);
+	return NULL;
 }
 
 
@@ -151,8 +152,7 @@ static void test_prepare_nodata(void)
 }
 
 
-
-static void test_put_s8(void)
+ZTEST(net_content_json, test_put_s8)
 {
 	int ret;
 	int i;
@@ -163,6 +163,8 @@ static void test_put_s8(void)
 		TEST_PAYLOAD(TEST_RES_S8, "v", "127"),
 		TEST_PAYLOAD(TEST_RES_S8, "v", "-128"),
 	};
+
+	test_prepare();
 
 	test_msg.path.res_id = TEST_RES_S8;
 
@@ -184,9 +186,11 @@ static void test_put_s8(void)
 	}
 }
 
-static void test_put_s8_nomem(void)
+ZTEST(net_content_json, test_put_s8_nomem)
 {
 	int ret;
+
+	test_prepare_nomem();
 
 	test_msg.path.res_id = TEST_RES_S8;
 
@@ -194,7 +198,7 @@ static void test_put_s8_nomem(void)
 	zassert_equal(ret, -ENOMEM, "Invalid error code returned");
 }
 
-static void test_put_s16(void)
+ZTEST(net_content_json, test_put_s16)
 {
 	int ret;
 	int i;
@@ -205,6 +209,8 @@ static void test_put_s16(void)
 		TEST_PAYLOAD(TEST_RES_S16, "v", "32767"),
 		TEST_PAYLOAD(TEST_RES_S16, "v", "-32768"),
 	};
+
+	test_prepare();
 
 	test_msg.path.res_id = TEST_RES_S16;
 
@@ -226,9 +232,11 @@ static void test_put_s16(void)
 	}
 }
 
-static void test_put_s16_nomem(void)
+ZTEST(net_content_json, test_put_s16_nomem)
 {
 	int ret;
+
+	test_prepare_nomem();
 
 	test_msg.path.res_id = TEST_RES_S16;
 
@@ -236,7 +244,7 @@ static void test_put_s16_nomem(void)
 	zassert_equal(ret, -ENOMEM, "Invalid error code returned");
 }
 
-static void test_put_s32(void)
+ZTEST(net_content_json, test_put_s32)
 {
 	int ret;
 	int i;
@@ -247,6 +255,8 @@ static void test_put_s32(void)
 		TEST_PAYLOAD(TEST_RES_S32, "v", "2147483647"),
 		TEST_PAYLOAD(TEST_RES_S32, "v", "-2147483648"),
 	};
+
+	test_prepare();
 
 	test_msg.path.res_id = TEST_RES_S32;
 
@@ -268,9 +278,11 @@ static void test_put_s32(void)
 	}
 }
 
-static void test_put_s32_nomem(void)
+ZTEST(net_content_json, test_put_s32_nomem)
 {
 	int ret;
+
+	test_prepare_nomem();
 
 	test_msg.path.res_id = TEST_RES_S32;
 
@@ -278,7 +290,7 @@ static void test_put_s32_nomem(void)
 	zassert_equal(ret, -ENOMEM, "Invalid error code returned");
 }
 
-static void test_put_s64(void)
+ZTEST(net_content_json, test_put_s64)
 {
 	int ret;
 	int i;
@@ -289,6 +301,8 @@ static void test_put_s64(void)
 		TEST_PAYLOAD(TEST_RES_S64, "v", "9223372036854775807"),
 		TEST_PAYLOAD(TEST_RES_S64, "v", "-9223372036854775808"),
 	};
+
+	test_prepare();
 
 	test_msg.path.res_id = TEST_RES_S64;
 
@@ -310,9 +324,11 @@ static void test_put_s64(void)
 	}
 }
 
-static void test_put_s64_nomem(void)
+ZTEST(net_content_json, test_put_s64_nomem)
 {
 	int ret;
+
+	test_prepare_nomem();
 
 	test_msg.path.res_id = TEST_RES_S64;
 
@@ -320,11 +336,13 @@ static void test_put_s64_nomem(void)
 	zassert_equal(ret, -ENOMEM, "Invalid error code returned");
 }
 
-static void test_put_string(void)
+ZTEST(net_content_json, test_put_string)
 {
 	int ret;
 	const char *expected_payload =
 		TEST_PAYLOAD(TEST_RES_STRING, "sv", "\"test_string\"");
+
+	test_prepare();
 
 	strcpy(test_string, "test_string");
 	test_msg.path.res_id = TEST_RES_STRING;
@@ -340,9 +358,11 @@ static void test_put_string(void)
 		      "Invalid packet offset");
 }
 
-static void test_put_string_nomem(void)
+ZTEST(net_content_json, test_put_string_nomem)
 {
 	int ret;
+
+	test_prepare_nomem();
 
 	test_msg.path.res_id = TEST_RES_STRING;
 
@@ -350,7 +370,7 @@ static void test_put_string_nomem(void)
 	zassert_equal(ret, -ENOMEM, "Invalid error code returned");
 }
 
-static void test_put_float(void)
+ZTEST(net_content_json, test_put_float)
 {
 	int ret;
 	int i;
@@ -365,6 +385,8 @@ static void test_put_float(void)
 		TEST_PAYLOAD(TEST_RES_FLOAT, "v", "2.333"),
 		TEST_PAYLOAD(TEST_RES_FLOAT, "v", "-123.125"),
 	};
+
+	test_prepare();
 
 	test_msg.path.res_id = TEST_RES_FLOAT;
 
@@ -386,9 +408,11 @@ static void test_put_float(void)
 	}
 }
 
-static void test_put_float_nomem(void)
+ZTEST(net_content_json, test_put_float_nomem)
 {
 	int ret;
+
+	test_prepare_nomem();
 
 	test_msg.path.res_id = TEST_RES_FLOAT;
 
@@ -396,7 +420,7 @@ static void test_put_float_nomem(void)
 	zassert_equal(ret, -ENOMEM, "Invalid error code returned");
 }
 
-static void test_put_bool(void)
+ZTEST(net_content_json, test_put_bool)
 {
 	int ret;
 	int i;
@@ -406,6 +430,8 @@ static void test_put_bool(void)
 		TEST_PAYLOAD(TEST_RES_BOOL, "bv", "true"),
 		TEST_PAYLOAD(TEST_RES_BOOL, "bv", "false"),
 	};
+
+	test_prepare();
 
 	test_msg.path.res_id = TEST_RES_BOOL;
 
@@ -427,9 +453,11 @@ static void test_put_bool(void)
 	}
 }
 
-static void test_put_bool_nomem(void)
+ZTEST(net_content_json, test_put_bool_nomem)
 {
 	int ret;
+
+	test_prepare_nomem();
 
 	test_msg.path.res_id = TEST_RES_BOOL;
 
@@ -437,7 +465,7 @@ static void test_put_bool_nomem(void)
 	zassert_equal(ret, -ENOMEM, "Invalid error code returned");
 }
 
-static void test_put_objlnk(void)
+ZTEST(net_content_json, test_put_objlnk)
 {
 	int ret;
 	int i;
@@ -450,6 +478,8 @@ static void test_put_objlnk(void)
 		TEST_PAYLOAD(TEST_RES_OBJLNK, "ov", "\"1:1\""),
 		TEST_PAYLOAD(TEST_RES_OBJLNK, "ov", "\"65535:65535\""),
 	};
+
+	test_prepare();
 
 	test_msg.path.res_id = TEST_RES_OBJLNK;
 
@@ -471,9 +501,11 @@ static void test_put_objlnk(void)
 	}
 }
 
-static void test_put_objlnk_nomem(void)
+ZTEST(net_content_json, test_put_objlnk_nomem)
 {
 	int ret;
+
+	test_prepare_nomem();
 
 	test_msg.path.res_id = TEST_RES_OBJLNK;
 
@@ -481,7 +513,7 @@ static void test_put_objlnk_nomem(void)
 	zassert_equal(ret, -ENOMEM, "Invalid error code returned");
 }
 
-static void test_get_s32(void)
+ZTEST(net_content_json, test_get_s32)
 {
 	int ret;
 	int i;
@@ -491,6 +523,8 @@ static void test_get_s32(void)
 		TEST_PAYLOAD(TEST_RES_S32, "v", "-2147483648"),
 	};
 	int32_t expected_value[] = { 0, INT32_MAX, INT32_MIN };
+
+	test_prepare();
 
 	test_msg.path.res_id = TEST_RES_S32;
 
@@ -503,9 +537,11 @@ static void test_get_s32(void)
 	}
 }
 
-static void test_get_s32_nodata(void)
+ZTEST(net_content_json, test_get_s32_nodata)
 {
 	int ret;
+
+	test_prepare_nodata();
 
 	test_msg.path.res_id = TEST_RES_S32;
 
@@ -513,7 +549,7 @@ static void test_get_s32_nodata(void)
 	zassert_equal(ret, -EINVAL, "Invalid error code returned");
 }
 
-static void test_get_s64(void)
+ZTEST(net_content_json, test_get_s64)
 {
 	int ret;
 	int i;
@@ -523,6 +559,8 @@ static void test_get_s64(void)
 		TEST_PAYLOAD(TEST_RES_S64, "v", "-9223372036854775808"),
 	};
 	int64_t expected_value[] = { 0, INT64_MAX, INT64_MIN };
+
+	test_prepare();
 
 	test_msg.path.res_id = TEST_RES_S64;
 
@@ -535,9 +573,11 @@ static void test_get_s64(void)
 	}
 }
 
-static void test_get_s64_nodata(void)
+ZTEST(net_content_json, test_get_s64_nodata)
 {
 	int ret;
+
+	test_prepare_nodata();
 
 	test_msg.path.res_id = TEST_RES_S64;
 
@@ -545,12 +585,14 @@ static void test_get_s64_nodata(void)
 	zassert_equal(ret, -EINVAL, "Invalid error code returned");
 }
 
-static void test_get_string(void)
+ZTEST(net_content_json, test_get_string)
 {
 	int ret;
 	const char *payload =
 		TEST_PAYLOAD(TEST_RES_STRING, "sv", "\"test_string\"");
 	const char *expected_value = "test_string";
+
+	test_prepare();
 
 	test_msg.path.res_id = TEST_RES_STRING;
 
@@ -562,9 +604,11 @@ static void test_get_string(void)
 			  "Invalid value parsed");
 }
 
-static void test_get_string_nodata(void)
+ZTEST(net_content_json, test_get_string_nodata)
 {
 	int ret;
+
+	test_prepare_nodata();
 
 	test_msg.path.res_id = TEST_RES_STRING;
 
@@ -574,7 +618,7 @@ static void test_get_string_nodata(void)
 
 #define DOUBLE_CMP_EPSILON 0.000000001
 
-static void test_get_float(void)
+ZTEST(net_content_json, test_get_float)
 {
 	int ret;
 	int i;
@@ -591,6 +635,8 @@ static void test_get_float(void)
 		0., 0.123, -0.987, 3., -10., 2.333, -123.125
 	};
 
+	test_prepare();
+
 	test_msg.path.res_id = TEST_RES_FLOAT;
 
 	for (i = 0; i < ARRAY_SIZE(expected_value); i++) {
@@ -604,9 +650,11 @@ static void test_get_float(void)
 	}
 }
 
-static void test_get_float_nodata(void)
+ZTEST(net_content_json, test_get_float_nodata)
 {
 	int ret;
+
+	test_prepare_nodata();
 
 	test_msg.path.res_id = TEST_RES_FLOAT;
 
@@ -614,7 +662,7 @@ static void test_get_float_nodata(void)
 	zassert_equal(ret, -EINVAL, "Invalid error code returned");
 }
 
-static void test_get_bool(void)
+ZTEST(net_content_json, test_get_bool)
 {
 	int ret;
 	int i;
@@ -623,6 +671,8 @@ static void test_get_bool(void)
 		TEST_PAYLOAD(TEST_RES_BOOL, "bv", "false"),
 	};
 	bool expected_value[] = { true, false };
+
+	test_prepare();
 
 	test_msg.path.res_id = TEST_RES_BOOL;
 
@@ -635,9 +685,11 @@ static void test_get_bool(void)
 	}
 }
 
-static void test_get_bool_nodata(void)
+ZTEST(net_content_json, test_get_bool_nodata)
 {
 	int ret;
+
+	test_prepare_nodata();
 
 	test_msg.path.res_id = TEST_RES_BOOL;
 
@@ -645,7 +697,7 @@ static void test_get_bool_nodata(void)
 	zassert_equal(ret, -EINVAL, "Invalid error code returned");
 }
 
-static void test_get_objlnk(void)
+ZTEST(net_content_json, test_get_objlnk)
 {
 	int ret;
 	int i;
@@ -657,6 +709,8 @@ static void test_get_objlnk(void)
 	struct lwm2m_objlnk expected_value[] = {
 		{ 0, 0 }, { 1, 1 }, { LWM2M_OBJLNK_MAX_ID, LWM2M_OBJLNK_MAX_ID }
 	};
+
+	test_prepare();
 
 	test_msg.path.res_id = TEST_RES_OBJLNK;
 
@@ -670,9 +724,11 @@ static void test_get_objlnk(void)
 	}
 }
 
-static void test_get_objlnk_nodata(void)
+ZTEST(net_content_json, test_get_objlnk_nodata)
 {
 	int ret;
+
+	test_prepare_nodata();
 
 	test_msg.path.res_id = TEST_RES_OBJLNK;
 
@@ -680,69 +736,4 @@ static void test_get_objlnk_nodata(void)
 	zassert_equal(ret, -EINVAL, "Invalid error code returned");
 }
 
-void test_main(void)
-{
-	test_obj_init();
-
-	ztest_test_suite(
-		lwm2m_content_plain_text,
-		ztest_unit_test_setup_teardown(
-			test_put_s8, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_s8_nomem, test_prepare_nomem, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_s16, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_s16_nomem, test_prepare_nomem, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_s32, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_s32_nomem, test_prepare_nomem, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_s64, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_s64_nomem, test_prepare_nomem, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_string, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_string_nomem, test_prepare_nomem, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_float, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_float_nomem, test_prepare_nomem, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_bool, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_bool_nomem, test_prepare_nomem, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_objlnk, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_objlnk_nomem, test_prepare_nomem, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_get_s32, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_get_s32_nodata, test_prepare_nodata, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_get_s64, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_get_s64_nodata, test_prepare_nodata, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_get_string, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_get_string_nodata, test_prepare_nodata, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_get_float, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_get_float_nodata, test_prepare_nodata, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_get_bool, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_get_bool_nodata, test_prepare_nodata, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_get_objlnk, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_get_objlnk_nodata, test_prepare_nodata, unit_test_noop)
-	);
-
-	ztest_run_test_suite(lwm2m_content_plain_text);
-}
+ZTEST_SUITE(net_content_json, NULL, test_obj_init, NULL, NULL, NULL);
