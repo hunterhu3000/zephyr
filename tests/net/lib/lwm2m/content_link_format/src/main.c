@@ -121,10 +121,12 @@ static void test_prepare_nomem(void)
 	test_packet.offset = sizeof(test_payload);
 }
 
-static void test_put_begin_discovery(void)
+ZTEST(net_content_link_format, test_put_begin_discovery)
 {
 	int ret;
 	const char *expected_payload = "";
+
+	test_prepare();
 
 	test_formatter_data.mode = LINK_FORMAT_MODE_DISCOVERY;
 
@@ -137,10 +139,12 @@ static void test_put_begin_discovery(void)
 			"Invalid packet offset");
 }
 
-static void test_put_begin_bs_discovery(void)
+ZTEST(net_content_link_format, test_put_begin_bs_discovery)
 {
 	int ret;
 	const char *expected_payload = "lwm2m=\"1.0\"";
+
+	test_prepare();
 
 	test_formatter_data.mode = LINK_FORMAT_MODE_BOOTSTRAP_DISCOVERY;
 
@@ -153,10 +157,12 @@ static void test_put_begin_bs_discovery(void)
 			"Invalid packet offset");
 }
 
-static void test_put_begin_register(void)
+ZTEST(net_content_link_format, test_put_begin_register)
 {
 	int ret;
 	const char *expected_payload = "</>;rt=\"oma.lwm2m\";ct=11543";
+
+	test_prepare();
 
 	test_formatter_data.mode = LINK_FORMAT_MODE_REGISTER;
 
@@ -169,9 +175,11 @@ static void test_put_begin_register(void)
 			"Invalid packet offset");
 }
 
-static void test_put_begin_nomem(void)
+ZTEST(net_content_link_format, test_put_begin_nomem)
 {
 	int ret;
+
+	test_prepare_nomem();
 
 	test_formatter_data.mode = LINK_FORMAT_MODE_REGISTER;
 
@@ -185,7 +193,7 @@ struct test_case_corelink {
 	const char *expected_payload;
 };
 
-static void test_put_corelink_discovery(void)
+ZTEST(net_content_link_format, test_put_corelink_discovery)
 {
 	int ret;
 	int i;
@@ -223,6 +231,8 @@ static void test_put_corelink_discovery(void)
 		},
 	};
 
+	test_prepare();
+
 	for (i = 0; i < ARRAY_SIZE(test_case); i++) {
 		context_reset();
 
@@ -243,7 +253,7 @@ static void test_put_corelink_discovery(void)
 	}
 }
 
-static void test_put_corelink_bs_discovery(void)
+ZTEST(net_content_link_format, test_put_corelink_bs_discovery)
 {
 	int ret;
 	int i;
@@ -270,6 +280,7 @@ static void test_put_corelink_bs_discovery(void)
 		},
 	};
 
+	test_prepare();
 
 	for (i = 0; i < ARRAY_SIZE(test_case); i++) {
 		context_reset();
@@ -291,7 +302,7 @@ static void test_put_corelink_bs_discovery(void)
 	}
 }
 
-static void test_put_corelink_bs_discovery_ssid(void)
+ZTEST(net_content_link_format, test_put_corelink_bs_discovery_ssid)
 {
 	int ret;
 	int i;
@@ -303,6 +314,8 @@ static void test_put_corelink_bs_discovery_ssid(void)
 		LWM2M_OBJECT_SECURITY_ID,
 		LWM2M_OBJECT_SERVER_ID,
 	};
+
+	test_prepare();
 
 	for (i = 0; i < ARRAY_SIZE(expected_payload); i++) {
 		context_reset();
@@ -326,7 +339,7 @@ static void test_put_corelink_bs_discovery_ssid(void)
 	}
 }
 
-static void test_put_corelink_register(void)
+ZTEST(net_content_link_format, test_put_corelink_register)
 {
 	int ret;
 	int i;
@@ -342,6 +355,8 @@ static void test_put_corelink_register(void)
 			.expected_payload = "</65535/0>"
 		},
 	};
+
+	test_prepare();
 
 	for (i = 0; i < ARRAY_SIZE(test_case); i++) {
 		context_reset();
@@ -363,10 +378,11 @@ static void test_put_corelink_register(void)
 	}
 }
 
-
-static void test_put_corelink_nomem(void)
+ZTEST(net_content_link_format, test_put_corelink_nomem)
 {
 	int ret;
+
+	test_prepare_nomem();
 
 	test_formatter_data.mode = LINK_FORMAT_MODE_REGISTER;
 	test_formatter_data.request_level = LWM2M_PATH_LEVEL_NONE;
@@ -375,36 +391,13 @@ static void test_put_corelink_nomem(void)
 	zassert_equal(ret, -ENOMEM, "Invalid error code returned");
 }
 
-void test_main(void)
+static void *obj_attr_init()
 {
 	test_obj_init();
 	test_attr_init();
-
-	/* Initialize Security/Server objects with SSID. */
 	lwm2m_engine_set_u16("0/0/10", TEST_SSID);
 	lwm2m_engine_set_u16("1/0/0", TEST_SSID);
-
-	ztest_test_suite(
-		lwm2m_content_link_format,
-		ztest_unit_test_setup_teardown(
-			test_put_begin_discovery, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_begin_bs_discovery, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_begin_register, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_begin_nomem, test_prepare_nomem, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_corelink_discovery, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_corelink_bs_discovery, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_corelink_bs_discovery_ssid, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_corelink_register, test_prepare, unit_test_noop),
-		ztest_unit_test_setup_teardown(
-			test_put_corelink_nomem, test_prepare_nomem, unit_test_noop)
-	);
-
-	ztest_run_test_suite(lwm2m_content_link_format);
+	return NULL;
 }
+
+ZTEST_SUITE(net_content_link_format, NULL, obj_attr_init, NULL, NULL, NULL);
