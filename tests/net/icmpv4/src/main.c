@@ -414,7 +414,7 @@ fail:
 	return NULL;
 }
 
-static void test_icmpv4(void)
+static void *icmpv4_setup(void)
 {
 	struct net_if_addr *ifaddr;
 
@@ -427,9 +427,19 @@ static void test_icmpv4(void)
 	if (!ifaddr) {
 		zassert_true(false, "Failed to add address");
 	}
+	return NULL;
 }
 
-static void test_icmpv4_send_echo_req(void)
+static void icmpv4_teardown(void *dummy)
+{
+	ARG_UNUSED(dummy);
+
+	iface = net_if_get_first_by_type(&NET_L2_GET_NAME(DUMMY));
+
+	net_if_ipv4_addr_rm(iface, &my_addr);
+}
+
+static void icmpv4_send_echo_req(void)
 {
 	struct net_pkt *pkt;
 
@@ -441,12 +451,12 @@ static void test_icmpv4_send_echo_req(void)
 	}
 
 	if (net_ipv4_input(pkt)) {
-		net_pkt_unref(pkt);
 		zassert_true(false, "Failed to send");
 	}
+	net_pkt_unref(pkt);
 }
 
-static void test_icmpv4_send_echo_rep(void)
+static void icmpv4_send_echo_rep(void)
 {
 	struct net_pkt *pkt;
 
@@ -458,14 +468,13 @@ static void test_icmpv4_send_echo_rep(void)
 	}
 
 	if (net_ipv4_input(pkt)) {
-		net_pkt_unref(pkt);
 		zassert_true(false, "Failed to send");
 	}
-
+	net_pkt_unref(pkt);
 	net_icmpv4_unregister_handler(&echo_rep_handler);
 }
 
-static void test_icmpv4_send_echo_req_opt(void)
+ZTEST(net_icmpv4, test_icmpv4_send_echo_req_opt)
 {
 	struct net_pkt *pkt;
 
@@ -477,12 +486,12 @@ static void test_icmpv4_send_echo_req_opt(void)
 	}
 
 	if (net_ipv4_input(pkt)) {
-		net_pkt_unref(pkt);
 		zassert_true(false, "Failed to send");
 	}
+	net_pkt_unref(pkt);
 }
 
-static void test_icmpv4_send_echo_req_bad_opt(void)
+ZTEST(net_icmpv4, test_send_echo_req_bad_opt)
 {
 	struct net_pkt *pkt;
 
@@ -493,19 +502,15 @@ static void test_icmpv4_send_echo_req_bad_opt(void)
 	}
 
 	if (!net_ipv4_input(pkt)) {
-		net_pkt_unref(pkt);
 		zassert_true(false, "Failed to send");
 	}
+	net_pkt_unref(pkt);
 }
 
-/**test case main entry */
-void test_main(void)
+ZTEST(net_icmpv4, test_icmpv4_send_echo)
 {
-	ztest_test_suite(test_icmpv4_fn,
-			 ztest_unit_test(test_icmpv4),
-			 ztest_unit_test(test_icmpv4_send_echo_req),
-			 ztest_unit_test(test_icmpv4_send_echo_rep),
-			 ztest_unit_test(test_icmpv4_send_echo_req_opt),
-			 ztest_unit_test(test_icmpv4_send_echo_req_bad_opt));
-	ztest_run_test_suite(test_icmpv4_fn);
+	icmpv4_send_echo_req();
+	icmpv4_send_echo_rep();
 }
+
+ZTEST_SUITE(net_icmpv4, NULL, icmpv4_setup, NULL, NULL, icmpv4_teardown);
